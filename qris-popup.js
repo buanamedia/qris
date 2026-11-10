@@ -1,5 +1,4 @@
 (function() {
-    // Link langsung ke gambar QRIS di repository GitHub
     const qrisImgUrl = "https://raw.githubusercontent.com/buanamedia/qris/main/qris.png";
 
     const style = document.createElement('style');
@@ -51,8 +50,9 @@
     `;
 
     function initModal() {
-        if (document.getElementById('qrisModal')) return;
-        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        if (!document.getElementById('qrisModal')) {
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
 
         const modal = document.getElementById('qrisModal');
         const closeBtn = document.getElementById('closeQrisBtn');
@@ -71,20 +71,22 @@
             }
         };
 
-        if (closeBtn) closeBtn.addEventListener('click', window.closeQrisModal);
+        if (closeBtn) closeBtn.onclick = window.closeQrisModal;
         if (modal) {
-            modal.addEventListener('click', (e) => {
+            modal.onclick = function(e) {
                 if (e.target.id === 'qrisModal') window.closeQrisModal();
-            });
+            };
         }
 
-        // OTOMATIS BUKA MODAL SAAT HALAMAN SELESAI DIMUAT (INITIAL LOAD)
-        window.openQrisModal();
+        // Paksa Munculkan Modal secara Otomatis dengan delay kecil (500ms)
+        setTimeout(() => {
+            window.openQrisModal();
+        }, 500);
     }
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initModal);
-    } else {
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
         initModal();
+    } else {
+        document.addEventListener('DOMContentLoaded', initModal);
     }
 })();
