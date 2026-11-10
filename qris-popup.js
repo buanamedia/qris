@@ -1,5 +1,5 @@
 (function() {
-    // Link langsung ke gambar yang terbukti bisa dibuka di browser Anda
+    // Link langsung ke gambar QRIS di repository GitHub
     const qrisImgUrl = "https://raw.githubusercontent.com/buanamedia/qris/main/qris.png";
 
     const style = document.createElement('style');
@@ -77,6 +77,9 @@
                 if (e.target.id === 'qrisModal') window.closeQrisModal();
             });
         }
+
+        // OTOMATIS BUKA MODAL SAAT HALAMAN SELESAI DIMUAT (INITIAL LOAD)
+        window.openQrisModal();
     }
 
     if (document.readyState === 'loading') {
