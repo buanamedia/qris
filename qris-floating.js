@@ -1,7 +1,7 @@
 (function() {
-    const qrisImgUrl = "https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=00020101021126570011ID.DANA.WWW01189360091100265465946430215ID10265465946435204581253033605802ID5911BUANA%20MEDIA6007BANDUNG61054011563046789";
+    // Link langsung ke gambar yang terbukti bisa dibuka di browser Anda
+    const qrisImgUrl = "https://raw.githubusercontent.com/buanamedia/qris/main/qris.png";
 
-    // CSS Styling Tombol Melayang
     const style = document.createElement('style');
     style.innerHTML = `
         .qris-floating-container {
