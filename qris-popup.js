@@ -1,6 +1,6 @@
 (function() {
-    // URL Gambar langsung dari repository GitHub buanamedia/qris
-    const qrisImgUrl = "https://raw.githubusercontent.com/buanamedia/qris/main/qris.png";
+    // Link Direct Media GitHub langsung ke gambar qris.png Anda
+    const qrisImgUrl = "https://media.githubusercontent.com/media/buanamedia/qris/main/qris.png";
 
     // Inject Style Modal
     const style = document.createElement('style');
