@@ -10,7 +10,7 @@
 
     let currentIndex = 0;
 
-    // CSS Styling dengan Efek Berkedip (Blink/Fade)
+    // CSS Styling & Animasi Bergeser (Slide Right to Left)
     const style = document.createElement('style');
     style.id = "qris-banner-styles";
     style.innerHTML = `
@@ -19,49 +19,89 @@
             border: 1px solid rgba(16, 185, 129, 0.3) !important;
             border-radius: 12px !important;
             padding: 8px 12px !important;
+            min-height: 38px !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
+            position: relative !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+
+        .qris-slide-item {
+            width: 100% !important;
             display: flex !important;
             align-items: center !important;
             justify-content: space-between !important;
             font-size: 12px !important;
-            min-height: 38px !important;
+            position: absolute !important;
+            left: 0 !important;
+            right: 0 !important;
+            padding: 0 12px !important;
             box-sizing: border-box !important;
-            overflow: hidden !important;
-            transition: opacity 0.25s ease-in-out !important;
+            transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out !important;
+        }
+
+        /* Posisi Saat Tampil di Tengah */
+        .qris-slide-active {
+            transform: translateX(0) !important;
             opacity: 1 !important;
         }
 
-        /* Kelas untuk efek berkedip menghilang */
-        .qris-blink-hide {
+        /* Posisi Keluar ke Kiri */
+        .qris-slide-exit {
+            transform: translateX(-100%) !important;
+            opacity: 0 !important;
+        }
+
+        /* Posisi Siap Masuk dari Kanan */
+        .qris-slide-enter {
+            transform: translateX(100%) !important;
             opacity: 0 !important;
         }
     `;
     document.head.appendChild(style);
 
+    function getBannerHTML(data) {
+        return `
+            <span style="color: #34d399; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                Terima Kasih, ${data.name} <span style="color: #fcd34d; font-weight: 700;">${data.amount}</span>
+            </span>
+            <span style="color: #fbbf24; font-weight: 700; display: flex; align-items: center; gap: 4px; margin-left: 8px; flex-shrink: 0;">
+                ☕ ${data.coffee}
+            </span>
+        `;
+    }
+
     function updateBannerContent() {
         const bannerContainer = document.getElementById('qrisBannerContainer');
         if (!bannerContainer) return;
 
-        // 1. Berkedip padam (Fade Out cepat)
-        bannerContainer.classList.add('qris-blink-hide');
+        const currentSlide = bannerContainer.querySelector('.qris-slide-active');
+        const data = runningDonations[currentIndex];
 
+        // 1. Buat elemen teks baru yang siap masuk dari sebelah KANAN
+        const newSlide = document.createElement('div');
+        newSlide.className = 'qris-slide-item qris-slide-enter';
+        newSlide.innerHTML = getBannerHTML(data);
+        bannerContainer.appendChild(newSlide);
+
+        // 2. Geser elemen lama ke KIRI, dan geser elemen baru dari KANAN ke TENGAH
         setTimeout(() => {
-            // 2. Ganti teks saat dalam keadaan padam
-            const data = runningDonations[currentIndex];
-            bannerContainer.innerHTML = `
-                <span style="color: #34d399; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                    Terima Kasih, ${data.name} <span style="color: #fcd34d; font-weight: 700;">${data.amount}</span>
-                </span>
-                <span style="color: #fbbf24; font-weight: 700; display: flex; align-items: center; gap: 4px; margin-left: 8px; flex-shrink: 0;">
-                    ☕ ${data.coffee}
-                </span>
-            `;
+            if (currentSlide) {
+                currentSlide.className = 'qris-slide-item qris-slide-exit';
+            }
+            newSlide.className = 'qris-slide-item qris-slide-active';
+        }, 50);
 
-            // 3. Berkedip menyala kembali (Fade In)
-            bannerContainer.classList.remove('qris-blink-hide');
+        // 3. Hapus elemen lama setelah selesai bergeser
+        setTimeout(() => {
+            if (currentSlide) {
+                currentSlide.remove();
+            }
+        }, 550);
 
-            // Lanjut ke index berikutnya
-            currentIndex = (currentIndex + 1) % runningDonations.length;
-        }, 250); // Jeda kedipan (250 ms)
+        // Lanjut ke indeks berikutnya
+        currentIndex = (currentIndex + 1) % runningDonations.length;
     }
 
     function initBanner() {
@@ -71,8 +111,8 @@
         // Tampilkan data pertama
         updateBannerContent();
 
-        // Ganti data donatur dan berkedip setiap 3 detik (3000 ms)
-        setInterval(updateBannerContent, 3000);
+        // Geser ke donatur berikutnya setiap 3.5 detik (3500 ms)
+        setInterval(updateBannerContent, 3500);
     }
 
     if (document.readyState === 'interactive' || document.readyState === 'complete') {
