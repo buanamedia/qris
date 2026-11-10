@@ -1,5 +1,5 @@
 (function() {
-    // Data list donatur / ucapan terima kasih yang akan tampil berputar (carousel)
+    // Data daftar donatur / ucapan terima kasih
     const runningDonations = [
         { name: "Dari Hamba Allah", amount: "Rp 100.000", coffee: 1 },
         { name: "Budi Santoso", amount: "Rp 50.000", coffee: 1 },
@@ -10,7 +10,7 @@
 
     let currentIndex = 0;
 
-    // Style khusus untuk efek animasi fade & transition banner
+    // CSS Styling dengan Efek Berkedip (Blink/Fade)
     const style = document.createElement('style');
     style.id = "qris-banner-styles";
     style.innerHTML = `
@@ -26,9 +26,12 @@
             min-height: 38px !important;
             box-sizing: border-box !important;
             overflow: hidden !important;
-            transition: opacity 0.4s ease-in-out !important;
+            transition: opacity 0.25s ease-in-out !important;
+            opacity: 1 !important;
         }
-        .qris-banner-fade-out {
+
+        /* Kelas untuk efek berkedip menghilang */
+        .qris-blink-hide {
             opacity: 0 !important;
         }
     `;
@@ -38,12 +41,12 @@
         const bannerContainer = document.getElementById('qrisBannerContainer');
         if (!bannerContainer) return;
 
-        const data = runningDonations[currentIndex];
-
-        // Efek animasi transisi halus (fade out -> ganti teks -> fade in)
-        bannerContainer.classList.add('qris-banner-fade-out');
+        // 1. Berkedip padam (Fade Out cepat)
+        bannerContainer.classList.add('qris-blink-hide');
 
         setTimeout(() => {
+            // 2. Ganti teks saat dalam keadaan padam
+            const data = runningDonations[currentIndex];
             bannerContainer.innerHTML = `
                 <span style="color: #34d399; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                     Terima Kasih, ${data.name} <span style="color: #fcd34d; font-weight: 700;">${data.amount}</span>
@@ -52,40 +55,31 @@
                     ☕ ${data.coffee}
                 </span>
             `;
-            bannerContainer.classList.remove('qris-banner-fade-out');
-        }, 400);
 
-        // Lanjut ke item berikutnya (looping balik ke index 0)
-        currentIndex = (currentIndex + 1) % runningDonations.length;
+            // 3. Berkedip menyala kembali (Fade In)
+            bannerContainer.classList.remove('qris-blink-hide');
+
+            // Lanjut ke index berikutnya
+            currentIndex = (currentIndex + 1) % runningDonations.length;
+        }, 250); // Jeda kedipan (250 ms)
     }
 
     function initBanner() {
-        // Cari container banner di modal QRIS
-        const modalContainer = document.querySelector('#qrisModalWrapper > div');
-        if (!modalContainer) return;
+        const bannerBox = document.getElementById('qrisBannerContainer');
+        if (!bannerBox) return;
 
-        // Cek apakah elemen banner sudah dibuat atau belum
-        let bannerBox = document.getElementById('qrisBannerContainer');
-        if (!bannerBox) {
-            bannerBox = document.createElement('div');
-            bannerBox.id = 'qrisBannerContainer';
-            bannerBox.className = 'qris-banner-box';
-            modalContainer.appendChild(bannerBox);
-        }
-
-        // Tampilkan data awal
+        // Tampilkan data pertama
         updateBannerContent();
 
-        // Ganti data donatur secara otomatis setiap 3.5 detik (3500 ms)
-        setInterval(updateBannerContent, 3500);
+        // Ganti data donatur dan berkedip setiap 3 detik (3000 ms)
+        setInterval(updateBannerContent, 3000);
     }
 
-    // Jalankan skrip saat modal/DOM siap
     if (document.readyState === 'interactive' || document.readyState === 'complete') {
-        setTimeout(initBanner, 500);
+        setTimeout(initBanner, 400);
     } else {
         document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(initBanner, 500);
+            setTimeout(initBanner, 400);
         });
     }
 })();
