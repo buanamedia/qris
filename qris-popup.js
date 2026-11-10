@@ -1,8 +1,9 @@
 (function() {
     const qrisImgUrl = "https://raw.githubusercontent.com/buanamedia/qris/main/qris.png";
 
-    // Inject Style khusus modal dengan Z-Index paling tinggi & paksa tampil jika aktif
+    // CSS Styling Khusus Overlay Modal
     const style = document.createElement('style');
+    style.id = "qris-popup-styles";
     style.innerHTML = `
         @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600&display=swap');
         .qris-cursive-text { font-family: 'Caveat', cursive !important; }
@@ -11,8 +12,6 @@
             position: fixed !important;
             top: 0 !important;
             left: 0 !important;
-            right: 0 !important;
-            bottom: 0 !important;
             width: 100vw !important;
             height: 100vh !important;
             background-color: rgba(2, 6, 23, 0.85) !important;
@@ -24,13 +23,13 @@
             padding: 16px !important;
             box-sizing: border-box !important;
         }
-        #qrisModalWrapper.qris-close-modal {
+        #qrisModalWrapper.qris-hidden {
             display: none !important;
         }
     `;
     document.head.appendChild(style);
 
-    // Elemen HTML Modal
+    // Elemen HTML Modal Popup
     const modalHTML = `
         <div id="qrisModalWrapper">
             <div style="background-color: #0f172a; border: 1px solid #1e293b; border-radius: 16px; max-width: 384px; width: 100%; padding: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); position: relative; text-align: left; box-sizing: border-box;">
@@ -53,7 +52,7 @@
                     </p>
                 </div>
 
-                <!-- Gambar QRIS -->
+                <!-- QRIS Image -->
                 <div style="background-color: #ffffff; padding: 8px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px;">
                     <img 
                         src="${qrisImgUrl}" 
@@ -76,7 +75,7 @@
         </div>
     `;
 
-    function renderAndOpenModal() {
+    function initPopup() {
         if (!document.getElementById('qrisModalWrapper')) {
             document.body.insertAdjacentHTML('beforeend', modalHTML);
         }
@@ -84,18 +83,16 @@
         const modalWrapper = document.getElementById('qrisModalWrapper');
         const closeBtn = document.getElementById('closeQrisBtn');
 
-        // Fungsi Global Pembuka Modal
+        // Deklarasi fungsi pembuka global
         window.openQrisModal = function() {
-            if (modalWrapper) {
-                modalWrapper.classList.remove('qris-close-modal');
-            }
+            const wrapper = document.getElementById('qrisModalWrapper');
+            if (wrapper) wrapper.classList.remove('qris-hidden');
         };
 
-        // Fungsi Global Penutup Modal
+        // Deklarasi fungsi penutup global
         window.closeQrisModal = function() {
-            if (modalWrapper) {
-                modalWrapper.classList.add('qris-close-modal');
-            }
+            const wrapper = document.getElementById('qrisModalWrapper');
+            if (wrapper) wrapper.classList.add('qris-hidden');
         };
 
         if (closeBtn) {
@@ -112,14 +109,12 @@
                 }
             };
         }
-
-        // PAKSA MUNCULKAN MODAL DARI AWAL
-        window.openQrisModal();
     }
 
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        renderAndOpenModal();
+    // Jalankan inisialisasi segera
+    if (document.readyState === 'interactive' || document.readyState === 'complete') {
+        initPopup();
     } else {
-        document.addEventListener('DOMContentLoaded', renderAndOpenModal);
+        document.addEventListener('DOMContentLoaded', initPopup);
     }
 })();
