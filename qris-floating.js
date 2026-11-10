@@ -1,4 +1,7 @@
 (function() {
+    // URL Gambar QRIS Mengambil dari Root Repository GitHub
+    const qrisImgUrl = "https://cdn.jsdelivr.net/gh/buanamedia/qris@main/qris.png";
+
     // 1. CSS Khusus Floating Button Kiri Bawah
     const style = document.createElement('style');
     style.innerHTML = `
@@ -46,7 +49,7 @@
     // 2. Element Button
     const floatingHTML = `
         <div id="qrisFloatingBtn" class="qris-floating-container" title="Buka QRIS Dukungan">
-            <img class="qris-floating-img" src="https://cdn-dw-qris-registration.oss-ap-southeast-5.aliyuncs.com/dw-qris-merchant-bo/registration/ID1026546594643_A01.png?Expires=1794301538&OSSAccessKeyId=LTAI5tFFm75bG1DoYMJDk1Aq&Signature=l5bENdte0p1slWDc8jCqIAu7WOg%3D" alt="QRIS" onerror="this.onerror=null; this.src='https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=QRIS';">
+            <img class="qris-floating-img" src="${qrisImgUrl}" alt="QRIS">
             <span class="qris-floating-text">QRIS</span>
         </div>
     `;
