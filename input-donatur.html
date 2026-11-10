@@ -3,14 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Input Data Dukungan QRIS</title>
+    <title>Input Donatur - Firebase Realtime</title>
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // Konfigurasi Database Firebase Asia-Southeast Anda
+        const firebaseConfig = {
+            databaseURL: "https://qris-donasi-default-rtdb.asia-southeast1.firebasedatabase.app/"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const donationsRef = ref(db, 'donations');
+
+        // Simpan Data Donatur Baru
+        document.getElementById('donationForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('donorName').value.trim();
+            const rawAmount = parseInt(document.getElementById('donorAmount').value);
+            const coffee = parseInt(document.getElementById('donorCoffee').value);
+            const formattedAmount = 'Rp ' + rawAmount.toLocaleString('id-ID');
+
+            push(donationsRef, {
+                name: name,
+                amount: formattedAmount,
+                coffee: coffee,
+                timestamp: Date.now()
+            }).then(() => {
+                document.getElementById('donationForm').reset();
+                document.getElementById('donorCoffee').value = "1";
+                alert('Data donatur berhasil dikirim ke Firebase!');
+            });
+        });
+
+        // Tampilkan List Data secara Real-Time
+        onValue(donationsRef, (snapshot) => {
+            const listEl = document.getElementById('donorList');
+            listEl.innerHTML = '';
+            const data = snapshot.val();
+            if (data) {
+                Object.keys(data).reverse().forEach((key) => {
+                    const item = data[key];
+                    const li = document.createElement('li');
+                    li.className = 'bg-slate-800/60 p-2.5 rounded-lg flex items-center justify-between border border-slate-700/50';
+                    li.innerHTML = `
+                        <span class="truncate font-medium text-emerald-400">
+                            ${item.name} - <strong class="text-amber-300">${item.amount}</strong>
+                        </span>
+                        <span class="text-amber-400 font-bold ml-2">☕ ${item.coffee}</span>
+                    `;
+                    listEl.appendChild(li);
+                });
+            }
+        });
+
+        // Reset Data
+        document.getElementById('clearDataBtn').addEventListener('click', () => {
+            if (confirm('Hapus seluruh data donasi dari Firebase?')) {
+                remove(donationsRef);
+            }
+        });
+    </script>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center p-4">
 
     <div class="max-w-md w-full bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl space-y-6">
         <h2 class="text-xl font-bold text-amber-400 border-b border-slate-800 pb-3 flex items-center gap-2">
-            <span>☕</span> Input Data Donatur QRIS
+            <span>🔥</span> Input Data Donatur (Firebase)
         </h2>
 
         <form id="donationForm" class="space-y-4">
@@ -35,77 +97,18 @@
 
             <button type="submit" 
                 class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2.5 rounded-lg transition-colors text-sm">
-                + Tambahkan Data Donatur
+                + Simpan ke Firebase
             </button>
         </form>
 
-        <!-- Daftar Data Donatur yang Sudah Diinput -->
         <div class="pt-4 border-t border-slate-800">
             <div class="flex items-center justify-between mb-3">
-                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Daftar Donatur Aktif</h3>
-                <button id="clearDataBtn" class="text-[10px] text-red-400 hover:underline">Reset Data</button>
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Live Database Donatur</h3>
+                <button id="clearDataBtn" class="text-[10px] text-red-400 hover:underline">Reset All</button>
             </div>
             <ul id="donorList" class="space-y-2 max-h-48 overflow-y-auto text-xs pr-1"></ul>
         </div>
     </div>
 
-    <script>
-        const STORAGE_KEY = 'qris_donations_data';
-
-        function getStoredData() {
-            const data = localStorage.getItem(STORAGE_KEY);
-            return data ? JSON.parse(data) : [
-                { name: "Dari Hamba Allah", amount: "Rp 100.000", coffee: 1 }
-            ];
-        }
-
-        function renderList() {
-            const listEl = document.getElementById('donorList');
-            const donations = getStoredData();
-            listEl.innerHTML = '';
-
-            donations.forEach((item, index) => {
-                const li = document.createElement('li');
-                li.className = 'bg-slate-800/60 p-2.5 rounded-lg flex items-center justify-between border border-slate-700/50';
-                li.innerHTML = `
-                    <span class="truncate font-medium text-emerald-400">
-                        ${item.name} - <strong class="text-amber-300">${item.amount}</strong>
-                    </span>
-                    <span class="text-amber-400 font-bold ml-2">☕ ${item.coffee}</span>
-                `;
-                listEl.appendChild(li);
-            });
-        }
-
-        document.getElementById('donationForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const name = document.getElementById('donorName').value.trim();
-            const rawAmount = parseInt(document.getElementById('donorAmount').value);
-            const coffee = parseInt(document.getElementById('donorCoffee').value);
-
-            const formattedAmount = 'Rp ' + rawAmount.toLocaleString('id-ID');
-            const currentData = getStoredData();
-            
-            // Tambahkan data baru di urutan paling atas
-            currentData.unshift({ name, amount: formattedAmount, coffee });
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(currentData));
-
-            // Reset Form & Update Tampilan
-            document.getElementById('donorName').value = '';
-            document.getElementById('donorAmount').value = '';
-            document.getElementById('donorCoffee').value = '1';
-            renderList();
-            alert('Data donatur berhasil ditambahkan!');
-        });
-
-        document.getElementById('clearDataBtn').addEventListener('click', function() {
-            if (confirm('Yakin ingin mereset seluruh data donatur?')) {
-                localStorage.removeItem(STORAGE_KEY);
-                renderList();
-            }
-        });
-
-        renderList();
-    </script>
 </body>
 </html>
