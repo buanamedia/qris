@@ -1,6 +1,6 @@
 (function() {
-    // Memanggil file gambar qris.png di folder lokal yang sama
-    const qrisImgUrl = "qris.png";
+    // URL Gambar langsung dari repository GitHub buanamedia/qris
+    const qrisImgUrl = "https://raw.githubusercontent.com/buanamedia/qris/main/qris.png";
 
     // CSS Styling Tombol Melayang
     const style = document.createElement('style');
