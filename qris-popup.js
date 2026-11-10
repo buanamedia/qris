@@ -1,8 +1,9 @@
 (function() {
-    // URL Gambar QRIS Valid
-    const qrisImgUrl = "https://cdn-dw-qris-registration.oss-ap-southeast-5.aliyuncs.com/dw-qris-merchant-bo/registration/ID1026546594643_A01.png?Expires=1794301538&OSSAccessKeyId=LTAI5tFFm75bG1DoYMJDk1Aq&Signature=l5bENdte0p1slWDc8jCqIAu7WOg%3D";
+    // 1. URL Gambar QRIS Mengambil dari Root Repository GitHub
+    // Pastikan mengganti USERNAME_GITHUB dan NAMA_REPO sesuai akun Anda
+    const qrisImgUrl = "https://cdn.jsdelivr.net/gh/buanamedia/qris@main/qris.png";
 
-    // 1. Inject Font & Style Modal
+    // 2. Inject Font & Style Modal
     const style = document.createElement('style');
     style.innerHTML = `
         @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600&display=swap');
@@ -10,7 +11,7 @@
     `;
     document.head.appendChild(style);
 
-    // 2. Buat HTML Modal
+    // 3. Buat HTML Modal
     const modalHTML = `
         <div id="qrisModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden" style="display:none;">
             <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl relative text-left">
@@ -39,7 +40,6 @@
                         src="${qrisImgUrl}" 
                         alt="QRIS Merchant" 
                         class="w-full h-auto max-h-[380px] object-contain rounded-lg"
-                        onerror="this.onerror=null; this.src='https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=Dukungan%20QRIS';"
                     >
                 </div>
 
@@ -57,7 +57,7 @@
         </div>
     `;
 
-    // 3. Render Modal & Fungsi Global
+    // 4. Render Modal & Fungsi Global
     function initModal() {
         if (document.getElementById('qrisModal')) return;
         document.body.insertAdjacentHTML('beforeend', modalHTML);
