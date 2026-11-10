@@ -1,14 +1,56 @@
 (function() {
-    // 1. Inject Style CSS & Font pendukung (jika belum ada)
+    // 1. Inject Style CSS untuk Font & Elemen Melayang
     const style = document.createElement('style');
     style.innerHTML = `
         @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600&display=swap');
         .qris-cursive-text { font-family: 'Caveat', cursive; }
+        
+        .qris-floating-btn {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            z-index: 40;
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 6px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .qris-floating-btn:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 20px 30px -10px rgba(99, 102, 241, 0.4);
+        }
+        .qris-floating-btn img {
+            width: 42px;
+            height: 42px;
+            object-fit: contain;
+            border-radius: 6px;
+        }
+        .qris-floating-btn span {
+            font-size: 10px;
+            font-weight: 800;
+            color: #d97706;
+            margin-top: 2px;
+            letter-spacing: 0.5px;
+        }
     `;
     document.head.appendChild(style);
 
-    // 2. Buat Elemen Modal HTML
-    const modalHTML = `
+    // 2. Buat Elemen Floating Button + Modal HTML
+    const qrisWidgetHTML = `
+        <!-- Tombol QRIS Melayang (Kiri Bawah) -->
+        <div id="qrisFloatingBtn" class="qris-floating-btn" title="Buka QRIS Dukungan">
+            <img src="https://cdn-dw-qris-registration.oss-ap-southeast-5.aliyuncs.com/dw-qris-merchant-bo/registration/ID1026546594643_A01.png?Expires=1794301538&OSSAccessKeyId=LTAI5tFFm75bG1DoYMJDk1Aq&Signature=l5bENdte0p1slWDc8jCqIAu7WOg%3D" alt="QRIS Mini">
+            <span>QRIS</span>
+        </div>
+
+        <!-- Modal Popup QRIS -->
         <div id="qrisModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
             <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl relative">
                 
@@ -53,14 +95,15 @@
         </div>
     `;
 
-    // 3. Masukkan HTML ke Body setelah DOM siap
+    // 3. Masukkan ke DOM & Atur Event Handlers
     document.addEventListener('DOMContentLoaded', () => {
-        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        document.body.insertAdjacentHTML('beforeend', qrisWidgetHTML);
 
         const modal = document.getElementById('qrisModal');
         const closeBtn = document.getElementById('closeQrisBtn');
+        const floatingBtn = document.getElementById('qrisFloatingBtn');
 
-        // Fungsi Buka & Tutup Modal (Global)
+        // Fungsi Global Pembuka & Penutup Modal
         window.openQrisModal = function() {
             if (modal) modal.classList.remove('hidden');
         };
@@ -69,7 +112,10 @@
             if (modal) modal.classList.add('hidden');
         };
 
-        // Event listener tombol close & backdrop click
+        // Event Klik Tombol Melayang
+        if (floatingBtn) floatingBtn.addEventListener('click', window.openQrisModal);
+
+        // Event Klik Close Modal & Out-of-bounds Click
         if (closeBtn) closeBtn.addEventListener('click', window.closeQrisModal);
         
         if (modal) {
@@ -80,7 +126,7 @@
             });
         }
 
-        // Tampilkan Modal secara Otomatis saat halaman selesai dimuat
+        // Tampilkan Modal Popup Secara Otomatis saat halaman pertama dimuat
         window.openQrisModal();
     });
 })();
