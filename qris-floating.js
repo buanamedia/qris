@@ -1,8 +1,8 @@
 (function() {
-    // URL Gambar QRIS Mengambil dari Root Repository GitHub
-    const qrisImgUrl = "https://cdn.jsdelivr.net/gh/buanamedia/qris@main/qris.png";
+    // Memanggil file gambar qris.png di folder lokal yang sama
+    const qrisImgUrl = "qris.png";
 
-    // 1. CSS Khusus Floating Button Kiri Bawah
+    // CSS Styling Tombol Melayang
     const style = document.createElement('style');
     style.innerHTML = `
         .qris-floating-container {
@@ -46,7 +46,6 @@
     `;
     document.head.appendChild(style);
 
-    // 2. Element Button
     const floatingHTML = `
         <div id="qrisFloatingBtn" class="qris-floating-container" title="Buka QRIS Dukungan">
             <img class="qris-floating-img" src="${qrisImgUrl}" alt="QRIS">
@@ -64,7 +63,7 @@
                 if (typeof window.openQrisModal === 'function') {
                     window.openQrisModal();
                 } else {
-                    console.error('Script qris-popup.js belum dipasang!');
+                    console.error('Script qris-popup.js belum dimuat!');
                 }
             });
         }
