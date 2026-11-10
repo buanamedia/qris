@@ -1,16 +1,26 @@
 (function() {
-    // Data daftar donatur / ucapan terima kasih
-    const runningDonations = [
-        { name: "Dari Hamba Allah", amount: "Rp 100.000", coffee: 1 },
-        { name: "Budi Santoso", amount: "Rp 50.000", coffee: 1 },
-        { name: "Siti Rahma", amount: "Rp 200.000", coffee: 2 },
-        { name: "Kreator Anonim", amount: "Rp 25.000", coffee: 1 },
-        { name: "Sahabat Buanamedia", amount: "Rp 500.000", coffee: 5 }
-    ];
+    const STORAGE_KEY = 'qris_donations_data';
+
+    // Ambil data dari LocalStorage inputan pengguna, atau gunakan data default jika kosong
+    function getDonationData() {
+        const localData = localStorage.getItem(STORAGE_KEY);
+        if (localData) {
+            try {
+                return JSON.parse(localData);
+            } catch (e) {
+                console.error("Gagal membaca data donasi", e);
+            }
+        }
+        return [
+            { name: "Dari Hamba Allah", amount: "Rp 100.000", coffee: 1 },
+            { name: "Budi Santoso", amount: "Rp 50.000", coffee: 1 },
+            { name: "Siti Rahma", amount: "Rp 200.000", coffee: 2 }
+        ];
+    }
 
     let currentIndex = 0;
 
-    // Inject CSS Keyframes khusus untuk animasi bergeser murni (Pure Slide)
+    // Inject CSS Keyframes khusus untuk animasi bergeser (Slide Right to Left)
     const style = document.createElement('style');
     style.id = "qris-banner-styles";
     style.innerHTML = `
@@ -76,16 +86,17 @@
         const bannerContainer = document.getElementById('qrisBannerContainer');
         if (!bannerContainer) return;
 
-        const currentSlide = bannerContainer.querySelector('.qris-slide-item:not(.qris-animate-out)');
-        const data = runningDonations[currentIndex];
+        const donations = getDonationData();
+        if (donations.length === 0) return;
 
-        // 1. Buat slide baru
+        const currentSlide = bannerContainer.querySelector('.qris-slide-item:not(.qris-animate-out)');
+        const data = donations[currentIndex % donations.length];
+
         const newSlide = document.createElement('div');
         newSlide.className = 'qris-slide-item qris-animate-in';
         newSlide.innerHTML = getBannerHTML(data);
         bannerContainer.appendChild(newSlide);
 
-        // 2. Geser slide lama keluar ke kiri jika ada
         if (currentSlide) {
             currentSlide.classList.remove('qris-animate-in');
             currentSlide.classList.add('qris-animate-out');
@@ -94,8 +105,7 @@
             }, 600);
         }
 
-        // Lanjut ke indeks berikutnya
-        currentIndex = (currentIndex + 1) % runningDonations.length;
+        currentIndex = (currentIndex + 1) % donations.length;
     }
 
     function initBanner() {
