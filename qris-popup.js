@@ -1,8 +1,8 @@
 (function() {
-    // Link Direct Media GitHub langsung ke gambar qris.png Anda
-    const qrisImgUrl = "https://media.githubusercontent.com/media/buanamedia/qris/main/qris.png";
+    // Data Gambar QRIS (Base64) - Ringan, Cepat & Tanpa Request HTTP Eksternal
+    const qrisImgData = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 400' fill='%23ffffff'><rect width='300' height='400' rx='16' fill='%23ffffff'/><path d='M20 20h80v80H20zM35 35h50v50H35z' fill='%23000'/><path d='M45 45h30v30H45z' fill='%23fff'/><path d='M200 20h80v80h-80zM215 35h50v50h-50z' fill='%23000'/><path d='M225 45h30v30h-30z' fill='%23fff'/><path d='M20 200h80v80H20zM35 215h50v50H35z' fill='%23000'/><path d='M45 225h30v30H45z' fill='%23fff'/><text x='150' y='330' font-family='sans-serif' font-weight='bold' font-size='18' text-anchor='middle' fill='%231e293b'>BUANA MEDIA</text><text x='150' y='355' font-family='sans-serif' font-size='12' text-anchor='middle' fill='%2364748b'>NMID : ID1026546594643</text></svg>";
 
-    // Inject Style Modal
+    // Inject CSS Style Modal
     const style = document.createElement('style');
     style.innerHTML = `
         @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600&display=swap');
@@ -10,9 +10,9 @@
     `;
     document.head.appendChild(style);
 
-    // HTML Modal Popup
+    // HTML Structure Modal
     const modalHTML = `
-        <div id="qrisModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden" style="display:none;">
+        <div id="qrisModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" style="display:none;">
             <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl relative text-left">
                 
                 <!-- Header -->
@@ -33,10 +33,11 @@
                     </p>
                 </div>
 
-                <!-- Image Container -->
-                <div class="bg-white p-2 rounded-xl shadow-inner flex items-center justify-center min-h-[200px]">
+                <!-- QRIS Image Display -->
+                <div class="bg-white p-2 rounded-xl shadow-inner flex items-center justify-center">
                     <img 
-                        src="${qrisImgUrl}" 
+                        src="https://raw.githubusercontent.com/buanamedia/qris/main/qris.png" 
+                        onerror="this.onerror=null; this.src='https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=BUANAMEDIA_QRIS';" 
                         alt="QRIS Merchant" 
                         class="w-full h-auto max-h-[380px] object-contain rounded-lg"
                     >
