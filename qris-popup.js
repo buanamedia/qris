@@ -1,58 +1,19 @@
 (function() {
-    // 1. Inject Style CSS untuk Font & Elemen Melayang
+    // URL Gambar QRIS Valid
+    const qrisImgUrl = "https://cdn-dw-qris-registration.oss-ap-southeast-5.aliyuncs.com/dw-qris-merchant-bo/registration/ID1026546594643_A01.png?Expires=1794301538&OSSAccessKeyId=LTAI5tFFm75bG1DoYMJDk1Aq&Signature=l5bENdte0p1slWDc8jCqIAu7WOg%3D";
+
+    // 1. Inject Font & Style Modal
     const style = document.createElement('style');
     style.innerHTML = `
         @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600&display=swap');
         .qris-cursive-text { font-family: 'Caveat', cursive; }
-        
-        .qris-floating-btn {
-            position: fixed;
-            bottom: 24px;
-            left: 24px;
-            z-index: 40;
-            background: #ffffff;
-            border-radius: 14px;
-            padding: 6px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .qris-floating-btn:hover {
-            transform: translateY(-4px) scale(1.05);
-            box-shadow: 0 20px 30px -10px rgba(99, 102, 241, 0.4);
-        }
-        .qris-floating-btn img {
-            width: 42px;
-            height: 42px;
-            object-fit: contain;
-            border-radius: 6px;
-        }
-        .qris-floating-btn span {
-            font-size: 10px;
-            font-weight: 800;
-            color: #d97706;
-            margin-top: 2px;
-            letter-spacing: 0.5px;
-        }
     `;
     document.head.appendChild(style);
 
-    // 2. Buat Elemen Floating Button + Modal HTML
-    const qrisWidgetHTML = `
-        <!-- Tombol QRIS Melayang (Kiri Bawah) -->
-        <div id="qrisFloatingBtn" class="qris-floating-btn" title="Buka QRIS Dukungan">
-            <img src="https://cdn-dw-qris-registration.oss-ap-southeast-5.aliyuncs.com/dw-qris-merchant-bo/registration/ID1026546594643_A01.png?Expires=1794301538&OSSAccessKeyId=LTAI5tFFm75bG1DoYMJDk1Aq&Signature=l5bENdte0p1slWDc8jCqIAu7WOg%3D" alt="QRIS Mini">
-            <span>QRIS</span>
-        </div>
-
-        <!-- Modal Popup QRIS -->
-        <div id="qrisModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl relative">
+    // 2. Buat HTML Modal
+    const modalHTML = `
+        <div id="qrisModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden" style="display:none;">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl relative text-left">
                 
                 <!-- Modal Header -->
                 <div class="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -73,11 +34,12 @@
                 </div>
 
                 <!-- Image Container -->
-                <div class="bg-white p-2 rounded-xl shadow-inner flex items-center justify-center">
+                <div class="bg-white p-2 rounded-xl shadow-inner flex items-center justify-center min-h-[200px]">
                     <img 
-                        src="https://cdn-dw-qris-registration.oss-ap-southeast-5.aliyuncs.com/dw-qris-merchant-bo/registration/ID1026546594643_A01.png?Expires=1794301538&OSSAccessKeyId=LTAI5tFFm75bG1DoYMJDk1Aq&Signature=l5bENdte0p1slWDc8jCqIAu7WOg%3D" 
+                        src="${qrisImgUrl}" 
                         alt="QRIS Merchant" 
                         class="w-full h-auto max-h-[380px] object-contain rounded-lg"
+                        onerror="this.onerror=null; this.src='https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=Dukungan%20QRIS';"
                     >
                 </div>
 
@@ -95,38 +57,39 @@
         </div>
     `;
 
-    // 3. Masukkan ke DOM & Atur Event Handlers
-    document.addEventListener('DOMContentLoaded', () => {
-        document.body.insertAdjacentHTML('beforeend', qrisWidgetHTML);
+    // 3. Render Modal & Fungsi Global
+    function initModal() {
+        if (document.getElementById('qrisModal')) return;
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
 
         const modal = document.getElementById('qrisModal');
         const closeBtn = document.getElementById('closeQrisBtn');
-        const floatingBtn = document.getElementById('qrisFloatingBtn');
 
-        // Fungsi Global Pembuka & Penutup Modal
         window.openQrisModal = function() {
-            if (modal) modal.classList.remove('hidden');
+            if (modal) {
+                modal.style.display = 'flex';
+                modal.classList.remove('hidden');
+            }
         };
 
         window.closeQrisModal = function() {
-            if (modal) modal.classList.add('hidden');
+            if (modal) {
+                modal.style.display = 'none';
+                modal.classList.add('hidden');
+            }
         };
 
-        // Event Klik Tombol Melayang
-        if (floatingBtn) floatingBtn.addEventListener('click', window.openQrisModal);
-
-        // Event Klik Close Modal & Out-of-bounds Click
         if (closeBtn) closeBtn.addEventListener('click', window.closeQrisModal);
-        
         if (modal) {
             modal.addEventListener('click', (e) => {
-                if (e.target.id === 'qrisModal') {
-                    window.closeQrisModal();
-                }
+                if (e.target.id === 'qrisModal') window.closeQrisModal();
             });
         }
+    }
 
-        // Tampilkan Modal Popup Secara Otomatis saat halaman pertama dimuat
-        window.openQrisModal();
-    });
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initModal);
+    } else {
+        initModal();
+    }
 })();
