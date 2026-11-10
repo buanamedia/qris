@@ -61,15 +61,8 @@
                     >
                 </div>
 
-                <!-- Footer Banner -->
-                <div style="background-color: rgba(6, 78, 59, 0.6); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; font-size: 12px;">
-                    <span style="color: #34d399; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                        Terima Kasih, Dari Hamba Allah <span style="color: #fcd34d; font-weight: 700;">Rp 100.000</span>
-                    </span>
-                    <span style="color: #fbbf24; font-weight: 700; display: flex; align-items: center; gap: 4px; margin-left: 8px; flex-shrink: 0;">
-                        ☕ 1
-                    </span>
-                </div>
+                <!-- Banner Container diisi otomatis oleh qris-banner.js -->
+                <div id="qrisBannerContainer" class="qris-banner-box"></div>
 
             </div>
         </div>
