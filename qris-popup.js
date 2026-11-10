@@ -1,8 +1,7 @@
 (function() {
-    // Generate Gambar QR Code secara dinamis tanpa perlu upload qris.png
-    const qrisImgUrl = "https://api.qrserver.com/v1/create-qr-code/?size=350x350&data=00020101021126570011ID.DANA.WWW01189360091100265465946430215ID10265465946435204581253033605802ID5911BUANA%20MEDIA6007BANDUNG61054011563046789";
+    // Link langsung ke gambar yang terbukti bisa dibuka di browser Anda
+    const qrisImgUrl = "https://raw.githubusercontent.com/buanamedia/qris/main/qris.png";
 
-    // Inject Style Modal
     const style = document.createElement('style');
     style.innerHTML = `
         @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600&display=swap');
@@ -10,12 +9,10 @@
     `;
     document.head.appendChild(style);
 
-    // HTML Modal Popup
     const modalHTML = `
         <div id="qrisModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" style="display:none;">
             <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl relative text-left">
                 
-                <!-- Header -->
                 <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                     <h3 class="text-sm font-bold text-amber-400 flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
@@ -26,27 +23,20 @@
                     </button>
                 </div>
                 
-                <!-- Title -->
                 <div class="text-center">
                     <p class="text-amber-300 font-semibold text-2xl tracking-wide qris-cursive-text">
                         Uang Kopi Seikhlasnya
                     </p>
                 </div>
 
-                <!-- QRIS Image Container -->
-                <div class="bg-white p-3 rounded-xl shadow-inner flex flex-col items-center justify-center min-h-[220px]">
+                <div class="bg-white p-2 rounded-xl shadow-inner flex items-center justify-center">
                     <img 
                         src="${qrisImgUrl}" 
-                        alt="QRIS Buana Media" 
-                        class="w-48 h-48 object-contain rounded-lg"
+                        alt="QRIS Merchant" 
+                        class="w-full h-auto max-h-[380px] object-contain rounded-lg"
                     >
-                    <div class="text-center mt-2">
-                        <p class="text-xs font-bold text-slate-800 uppercase tracking-wider">BUANA MEDIA</p>
-                        <p class="text-[10px] text-slate-500 font-mono">NMID: ID1026546594643</p>
-                    </div>
                 </div>
 
-                <!-- Footer Banner -->
                 <div class="bg-emerald-950/60 border border-emerald-500/30 rounded-xl px-3 py-2 flex items-center justify-between text-xs">
                     <span class="text-emerald-400 font-semibold truncate">
                         Terima Kasih, Dari Hamba Allah <span class="text-amber-300 font-bold">Rp 100.000</span>
