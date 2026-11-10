@@ -1,14 +1,14 @@
 (function() {
-    // Link langsung ke gambar yang terbukti bisa dibuka di browser Anda
     const qrisImgUrl = "https://raw.githubusercontent.com/buanamedia/qris/main/qris.png";
 
     const style = document.createElement('style');
+    style.id = "qris-floating-styles";
     style.innerHTML = `
         .qris-floating-container {
             position: fixed !important;
             bottom: 24px !important;
             left: 24px !important;
-            z-index: 99999 !important;
+            z-index: 999999 !important;
             background: #ffffff !important;
             border-radius: 12px !important;
             padding: 6px 8px !important;
@@ -53,24 +53,23 @@
     `;
 
     function initFloating() {
-        if (document.getElementById('qrisFloatingBtn')) return;
-        document.body.insertAdjacentHTML('beforeend', floatingHTML);
+        if (!document.getElementById('qrisFloatingBtn')) {
+            document.body.insertAdjacentHTML('beforeend', floatingHTML);
+        }
 
         const btn = document.getElementById('qrisFloatingBtn');
         if (btn) {
-            btn.addEventListener('click', () => {
+            btn.onclick = function() {
                 if (typeof window.openQrisModal === 'function') {
                     window.openQrisModal();
-                } else {
-                    console.error('Script qris-popup.js belum dimuat!');
                 }
-            });
+            };
         }
     }
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initFloating);
-    } else {
+    if (document.readyState === 'interactive' || document.readyState === 'complete') {
         initFloating();
+    } else {
+        document.addEventListener('DOMContentLoaded', initFloating);
     }
 })();
