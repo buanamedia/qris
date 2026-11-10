@@ -10,16 +10,26 @@
 
     let currentIndex = 0;
 
-    // CSS Styling & Animasi Bergeser (Slide Right to Left)
+    // Inject CSS Keyframes khusus untuk animasi bergeser murni (Pure Slide)
     const style = document.createElement('style');
     style.id = "qris-banner-styles";
     style.innerHTML = `
+        @keyframes slideInFromRight {
+            0% { transform: translateX(100%); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideOutToLeft {
+            0% { transform: translateX(0); opacity: 1; }
+            100% { transform: translateX(-100%); opacity: 0; }
+        }
+
         .qris-banner-box {
             background-color: rgba(6, 78, 59, 0.6) !important;
             border: 1px solid rgba(16, 185, 129, 0.3) !important;
             border-radius: 12px !important;
             padding: 8px 12px !important;
-            min-height: 38px !important;
+            min-height: 40px !important;
             box-sizing: border-box !important;
             overflow: hidden !important;
             position: relative !important;
@@ -35,28 +45,18 @@
             font-size: 12px !important;
             position: absolute !important;
             left: 0 !important;
-            right: 0 !important;
+            top: 0 !important;
+            bottom: 0 !important;
             padding: 0 12px !important;
             box-sizing: border-box !important;
-            transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out !important;
         }
 
-        /* Posisi Saat Tampil di Tengah */
-        .qris-slide-active {
-            transform: translateX(0) !important;
-            opacity: 1 !important;
+        .qris-animate-in {
+            animation: slideInFromRight 0.6s forwards ease-in-out !important;
         }
 
-        /* Posisi Keluar ke Kiri */
-        .qris-slide-exit {
-            transform: translateX(-100%) !important;
-            opacity: 0 !important;
-        }
-
-        /* Posisi Siap Masuk dari Kanan */
-        .qris-slide-enter {
-            transform: translateX(100%) !important;
-            opacity: 0 !important;
+        .qris-animate-out {
+            animation: slideOutToLeft 0.6s forwards ease-in-out !important;
         }
     `;
     document.head.appendChild(style);
@@ -76,29 +76,23 @@
         const bannerContainer = document.getElementById('qrisBannerContainer');
         if (!bannerContainer) return;
 
-        const currentSlide = bannerContainer.querySelector('.qris-slide-active');
+        const currentSlide = bannerContainer.querySelector('.qris-slide-item:not(.qris-animate-out)');
         const data = runningDonations[currentIndex];
 
-        // 1. Buat elemen teks baru yang siap masuk dari sebelah KANAN
+        // 1. Buat slide baru
         const newSlide = document.createElement('div');
-        newSlide.className = 'qris-slide-item qris-slide-enter';
+        newSlide.className = 'qris-slide-item qris-animate-in';
         newSlide.innerHTML = getBannerHTML(data);
         bannerContainer.appendChild(newSlide);
 
-        // 2. Geser elemen lama ke KIRI, dan geser elemen baru dari KANAN ke TENGAH
-        setTimeout(() => {
-            if (currentSlide) {
-                currentSlide.className = 'qris-slide-item qris-slide-exit';
-            }
-            newSlide.className = 'qris-slide-item qris-slide-active';
-        }, 50);
-
-        // 3. Hapus elemen lama setelah selesai bergeser
-        setTimeout(() => {
-            if (currentSlide) {
+        // 2. Geser slide lama keluar ke kiri jika ada
+        if (currentSlide) {
+            currentSlide.classList.remove('qris-animate-in');
+            currentSlide.classList.add('qris-animate-out');
+            setTimeout(() => {
                 currentSlide.remove();
-            }
-        }, 550);
+            }, 600);
+        }
 
         // Lanjut ke indeks berikutnya
         currentIndex = (currentIndex + 1) % runningDonations.length;
@@ -108,10 +102,7 @@
         const bannerBox = document.getElementById('qrisBannerContainer');
         if (!bannerBox) return;
 
-        // Tampilkan data pertama
         updateBannerContent();
-
-        // Geser ke donatur berikutnya setiap 3.5 detik (3500 ms)
         setInterval(updateBannerContent, 3500);
     }
 
