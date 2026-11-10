@@ -1,8 +1,5 @@
 (function() {
-    // Link Direct Media GitHub langsung ke gambar qris.png Anda
-    const qrisImgUrl = "https://media.githubusercontent.com/media/buanamedia/qris/main/qris.png";
-
-    // CSS Styling Tombol Melayang
+    // Inject CSS Styling Floating Button
     const style = document.createElement('style');
     style.innerHTML = `
         .qris-floating-container {
@@ -28,8 +25,8 @@
             box-shadow: 0 18px 25px -5px rgba(99, 102, 241, 0.5) !important;
         }
         .qris-floating-img {
-            width: 38px !important;
-            height: 38px !important;
+            width: 36px !important;
+            height: 36px !important;
             object-fit: contain !important;
             border-radius: 4px !important;
             display: block !important;
@@ -48,7 +45,7 @@
 
     const floatingHTML = `
         <div id="qrisFloatingBtn" class="qris-floating-container" title="Buka QRIS Dukungan">
-            <img class="qris-floating-img" src="${qrisImgUrl}" alt="QRIS">
+            <img class="qris-floating-img" src="https://raw.githubusercontent.com/buanamedia/qris/main/qris.png" onerror="this.onerror=null; this.src='https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=QRIS';" alt="QRIS">
             <span class="qris-floating-text">QRIS</span>
         </div>
     `;
